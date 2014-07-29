@@ -8,6 +8,7 @@
 project.properties
 bin/
 tmp/
+gen/
 *.tmp
 *.bak
 *.swp
