@@ -20,6 +20,7 @@
     <uses-permission android:name="android.permission.READ_LOGS" />
 
     <application
+        android:name="com.kingbright.footprint.FootprintApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -38,7 +39,21 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".service.FootprintService" />
+        <provider
+            android:name=".provider.FootprintProvider"
+            android:authorities="com.kingbright.footprint.provider" />
+
+        <service android:name=".service.FootprintService" >
+            <intent-filter>
+                <action android:name="com.kingbright.footprint.ACTION_START_TRACK" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.kingbright.footprint.ACTION_GET_LOCATION" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.kingbright.footprint.ACTION_STOP_TRACK" />
+            </intent-filter>
+        </service>
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"

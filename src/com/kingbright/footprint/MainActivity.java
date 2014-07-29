@@ -22,7 +22,7 @@ public class MainActivity extends Activity {
 	 * @param context
 	 */
 	private void startFootprintService(Context context) {
-		Intent intent = new Intent(context, FootprintService.class);
+		Intent intent = new Intent(FootprintService.ACTION_START_TRACK);
 		context.startService(intent);
 	}
 

@@ -1,6 +1,7 @@
 package com.kingbright.footprint.location;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -8,11 +9,13 @@ import com.baidu.location.LocationClient;
 import com.kingbright.footprint.model.Footprint;
 
 public class BaiduFootprintProxy extends FootprintProxy {
+	public static final String TAG = "BaiduFootprintProxy";
 	public LocationClient mLocationClient = null;
 	public BDLocationListener mListener = new BDLocationListener() {
 
 		@Override
 		public void onReceiveLocation(BDLocation location) {
+			Log.i(TAG, "onReceiveLocation");
 			Footprint footprint = BaiduLocationUtil
 					.convertToFootprint(location);
 			FootprintCallback callback = getCallback();
@@ -28,8 +31,15 @@ public class BaiduFootprintProxy extends FootprintProxy {
 	}
 
 	@Override
-	public void requestFootprintOnce() {
+	public void requestFootprint() {
 		mLocationClient.requestLocation();
+	}
+
+	@Override
+	public void release() {
+		registerCallback(null);
+		mLocationClient.stop();
+		mLocationClient = null;
 	}
 
 }

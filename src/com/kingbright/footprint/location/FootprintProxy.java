@@ -10,4 +10,6 @@ public abstract class FootprintProxy implements FootprintFetcher {
 	public void registerCallback(FootprintCallback callback) {
 		mFootprintCallback = callback;
 	}
+
+	public abstract void release();
 }
