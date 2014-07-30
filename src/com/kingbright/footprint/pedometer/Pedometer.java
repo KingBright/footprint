@@ -1,5 +1,7 @@
 package com.kingbright.footprint.pedometer;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
@@ -8,7 +10,7 @@ import android.util.Log;
 public class Pedometer implements StepListener {
 	public static final String TAG = "Pedometer";
 
-	private long mSteps = 0L;
+	private AtomicInteger mSteps = new AtomicInteger(0);
 
 	private OnPedometerUpdateListener mOnPedometerUpdateListener;
 
@@ -31,6 +33,14 @@ public class Pedometer implements StepListener {
 				SensorManager.SENSOR_DELAY_FASTEST);
 	}
 
+	public void reset() {
+		mSteps.set(0);
+	}
+
+	public int getCurrentSteps() {
+		return mSteps.get();
+	}
+
 	public void stop() {
 		Log.i(TAG, "Stop step detector");
 		mSensorManager.unregisterListener(mStepDetector);
@@ -42,13 +52,13 @@ public class Pedometer implements StepListener {
 
 	@Override
 	public void onStep() {
-		mSteps++;
+		int currentSteps = mSteps.addAndGet(1);
 		if (mOnPedometerUpdateListener != null) {
-			mOnPedometerUpdateListener.onUpdate(mSteps);
+			mOnPedometerUpdateListener.onUpdate(currentSteps);
 		}
 	}
 
 	public interface OnPedometerUpdateListener {
-		public void onUpdate(long mSteps);
+		public void onUpdate(int steps);
 	}
 }

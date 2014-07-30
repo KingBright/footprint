@@ -1,21 +1,21 @@
 package com.kingbright.footprint.service;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.app.Service;
+import android.content.Intent;
+import android.os.IBinder;
+import android.os.SystemClock;
+import android.text.TextUtils;
+import android.util.Log;
+
 import com.kingbright.footprint.constants.Constants;
 import com.kingbright.footprint.location.FootprintCallback;
 import com.kingbright.footprint.location.FootprintProxy;
 import com.kingbright.footprint.location.FootprintProxyFactory;
 import com.kingbright.footprint.model.Footprint;
 import com.kingbright.footprint.pedometer.Pedometer;
-
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.app.Service;
-import android.content.Intent;
-import android.hardware.SensorManager;
-import android.os.IBinder;
-import android.os.SystemClock;
-import android.text.TextUtils;
-import android.util.Log;
+import com.kingbright.footprint.pedometer.Pedometer.OnPedometerUpdateListener;
 
 /**
  * A background service helps to collect location info.
@@ -41,12 +41,21 @@ public class FootprintService extends Service {
 
 		@Override
 		public void onGetFootprint(Footprint footprint) {
-			Log.i("TAG", "footprint : " + footprint.toString());
+			Log.i(TAG, "footprint : " + footprint.toString());
 		}
 	};
 
 	private AlarmManager mAlarmManager;
 	private Pedometer mPedometer;
+
+	private OnPedometerUpdateListener mOnPedometerUpdateListener = new OnPedometerUpdateListener() {
+
+		@Override
+		public void onUpdate(int steps) {
+			Log.i(TAG, "current total steps : " + steps);
+		}
+
+	};
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -62,6 +71,7 @@ public class FootprintService extends Service {
 
 		mAlarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 		mPedometer = new Pedometer(getApplicationContext());
+		mPedometer.setListener(mOnPedometerUpdateListener);
 	}
 
 	@Override

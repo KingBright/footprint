@@ -40,7 +40,7 @@
         </activity>
 
         <provider
-            android:name=".provider.FootprintProvider"
+            android:name="com.kingbright.footprint.database.FootprintProvider"
             android:authorities="com.kingbright.footprint.provider" />
 
         <service android:name=".service.FootprintService" >
