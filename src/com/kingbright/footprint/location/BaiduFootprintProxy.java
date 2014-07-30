@@ -6,6 +6,9 @@ import android.util.Log;
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
+import com.baidu.location.LocationClientOption.LocationMode;
+import com.google.gson.Gson;
 import com.kingbright.footprint.model.Footprint;
 
 public class BaiduFootprintProxy extends FootprintProxy {
@@ -15,7 +18,8 @@ public class BaiduFootprintProxy extends FootprintProxy {
 
 		@Override
 		public void onReceiveLocation(BDLocation location) {
-			Log.i(TAG, "onReceiveLocation");
+			Gson gson = new Gson();
+			Log.i(TAG, "onReceiveLocation : " + gson.toJson(location));
 			Footprint footprint = BaiduLocationUtil
 					.convertToFootprint(location);
 			FootprintCallback callback = getCallback();
@@ -28,10 +32,17 @@ public class BaiduFootprintProxy extends FootprintProxy {
 	public BaiduFootprintProxy(Context context) {
 		mLocationClient = new LocationClient(context);
 		mLocationClient.registerLocationListener(mListener);
+		LocationClientOption options = new LocationClientOption();
+		options.setIsNeedAddress(true);
+		options.setNeedDeviceDirect(true);
+		options.setLocationMode(LocationMode.Hight_Accuracy);
+		mLocationClient.setLocOption(options);
+		mLocationClient.start();
 	}
 
 	@Override
 	public void requestFootprint() {
+		Log.i(TAG, "requestLocation");
 		mLocationClient.requestLocation();
 	}
 

@@ -5,11 +5,13 @@ import com.kingbright.footprint.location.FootprintCallback;
 import com.kingbright.footprint.location.FootprintProxy;
 import com.kingbright.footprint.location.FootprintProxyFactory;
 import com.kingbright.footprint.model.Footprint;
+import com.kingbright.footprint.pedometer.Pedometer;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.hardware.SensorManager;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.text.TextUtils;
@@ -44,6 +46,7 @@ public class FootprintService extends Service {
 	};
 
 	private AlarmManager mAlarmManager;
+	private Pedometer mPedometer;
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -58,6 +61,7 @@ public class FootprintService extends Service {
 		mFootprintProxy.registerCallback(mFootprintCallback);
 
 		mAlarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+		mPedometer = new Pedometer(getApplicationContext());
 	}
 
 	@Override
@@ -71,11 +75,13 @@ public class FootprintService extends Service {
 				getLocation();
 			} else if (action.equals(ACTION_START_TRACK)) {
 				registerRepeatLocationRequest(LOCATION_REQEUST_INTERVAL);
+				mPedometer.start();
 			} else if (action.equals(ACTION_STOP_TRACK)) {
 				Log.i(TAG, "cancel repeat task");
 				mAlarmManager.cancel(getLocationRequestOpertaion());
 				Log.i(TAG, "stop self");
 				stopSelf();
+				mPedometer.stop();
 			}
 		}
 		return super.onStartCommand(intent, flags, startId);

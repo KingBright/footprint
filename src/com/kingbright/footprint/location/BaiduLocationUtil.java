@@ -1,9 +1,12 @@
 package com.kingbright.footprint.location;
 
+import android.util.Log;
+
 import com.baidu.location.BDLocation;
 import com.kingbright.footprint.model.Footprint;
 
 public class BaiduLocationUtil {
+	public static final String TAG = "BaiduLocationUtil";
 	public static final int GPS_RESULT = 61;
 	public static final int CACHED_RESULT = 65;
 	public static final int NETWORK_RESULT = 161;
@@ -12,7 +15,7 @@ public class BaiduLocationUtil {
 
 	public static final int INVALID_ERROR = 62;
 	public static final int NETWORK_ERROR = 63;
-	public static final int OFFLINE_ERROR = 67;
+	public static final int OFFLINE_ERROR_USE_LAST = 67;
 	public static final int SERVER_ERROR_START = 162;
 	public static final int SERVER_ERROR_END = 167;
 	public static final int KEY_ERROR_START = 501;
@@ -32,17 +35,19 @@ public class BaiduLocationUtil {
 		Footprint footprint = new Footprint();
 
 		int type = location.getLocType();
+		Log.i(TAG, "type is " + type);
 		if (type == INVALID_ERROR || type == NETWORK_ERROR
-				|| type == OFFLINE_ERROR
+				|| type == OFFLINE_ERROR_USE_LAST
 				|| (type >= SERVER_ERROR_START && type <= SERVER_ERROR_END)
 				|| (type >= KEY_ERROR_START && type <= KEY_ERROR_END)) {
 			return null;
 		} else {
 			if (type == GPS_RESULT) {
 				footprint.type = FootprintType.GPS;
-			} else if (type == NETWORK_ERROR) {
+			} else if (type == NETWORK_RESULT) {
 				footprint.type = FootprintType.NETWORK;
-			} else if (type == NETWORK_OFFLINE_RESULT || type == OFFLINE_ERROR) {
+			} else if (type == NETWORK_OFFLINE_RESULT
+					|| type == OFFLINE_ERROR_USE_LAST) {
 				footprint.type = FootprintType.OFFLINE;
 			} else if (type == CACHED_RESULT) {
 				footprint.type = FootprintType.CACHE;
@@ -50,7 +55,9 @@ public class BaiduLocationUtil {
 
 			footprint.lat = location.getLatitude();
 			footprint.lon = location.getLongitude();
-			footprint.name = location.getAddrStr();
+			footprint.alt = location.getAltitude();
+			footprint.addr = location.getAddrStr();
+			footprint.time = location.getTime();
 		}
 		return footprint;
 	}

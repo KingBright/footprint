@@ -12,7 +12,9 @@ import com.kingbright.footprint.location.FootprintType;
 public class Footprint {
 	public double lat;
 	public double lon;
-	public String name;
+	public double alt;
+	public String addr;
+	public String time;
 	public FootprintType type;
 
 	/**
